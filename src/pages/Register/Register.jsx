@@ -1,28 +1,52 @@
+// src/pages/Register/Register.jsx
 import React, { useState } from 'react';
-import styles from './Register.module.css';
+import { auth, db } from '../../services/firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { validateEmail } from '../../utils/validation';
+import styles from './Register.module.css';
 
 const Register = () => {
   const [dni, setDni] = useState('');
   const [correo, setCorreo] = useState('');
   const [clave, setClave] = useState('');
-  const [confirmClave, setConfirmClave] = useState('');
+  const [confirmarClave, setConfirmarClave] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-       if (!validateEmail(correo)) {
+    if (!validateEmail(correo)) {
       alert('Por favor, ingrese un correo electrónico válido');
       return;
     }
 
-    if (clave !== confirmClave) {
-      alert('Las claves no coinciden');
+    if (clave !== confirmarClave) {
+      alert('Las contraseñas no coinciden');
       return;
     }
 
-    // Aquí iría la lógica de registro (API, Firebase, etc)
-    alert(`Registrando usuario con DNI: ${dni}`);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, correo, clave);
+      const user = userCredential.user;
+
+      // Guardar info adicional en Firestore
+      await setDoc(doc(db, 'usuarios', user.uid), {
+        uid: user.uid,
+        correo,
+        dni,
+        creado: new Date()
+      });
+
+      alert(`Usuario registrado con éxito: ${user.email}`);
+
+      // Limpiar el formulario
+      setDni('');
+      setCorreo('');
+      setClave('');
+      setConfirmarClave('');
+    } catch (error) {
+      alert(`Error al registrar usuario: ${error.message}`);
+    }
   };
 
   return (
@@ -30,44 +54,40 @@ const Register = () => {
       <form onSubmit={handleSubmit} className={styles.form}>
         <h2>Registrar Usuario</h2>
 
-        <label htmlFor="dni">DNI:</label>
+        <label htmlFor="dni">DNI</label>
         <input
-          id="dni"
           type="text"
+          id="dni"
           value={dni}
           onChange={(e) => setDni(e.target.value)}
           required
-          placeholder="Ingrese su DNI"
         />
 
-        <label htmlFor="correo">Correo electrónico:</label>
+        <label htmlFor="correo">Correo</label>
         <input
-          id="correo"
           type="email"
+          id="correo"
           value={correo}
           onChange={(e) => setCorreo(e.target.value)}
           required
-          placeholder="Ingrese su correo electrónico"
         />
 
-        <label htmlFor="clave">Clave:</label>
+        <label htmlFor="clave">Contraseña</label>
         <input
-          id="clave"
           type="password"
+          id="clave"
           value={clave}
           onChange={(e) => setClave(e.target.value)}
           required
-          placeholder="Ingrese su clave"
         />
 
-        <label htmlFor="confirmClave">Confirmar Clave:</label>
+        <label htmlFor="confirmarClave">Confirmar Contraseña</label>
         <input
-          id="confirmClave"
           type="password"
-          value={confirmClave}
-          onChange={(e) => setConfirmClave(e.target.value)}
+          id="confirmarClave"
+          value={confirmarClave}
+          onChange={(e) => setConfirmarClave(e.target.value)}
           required
-          placeholder="Confirme su clave"
         />
 
         <button type="submit">Registrar</button>
