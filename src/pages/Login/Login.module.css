@@ -49,9 +49,10 @@ button:hover {
 .registerBtn {
   width: 100%;
   margin-top: 15px;
-  background-color: #555;
+  background-color: #4CAF50; /* Verde */
+  color: white;
 }
 
 .registerBtn:hover {
-  background-color: #333;
+  background-color: #388E3C; /* Verde más oscuro al pasar el mouse */
 }

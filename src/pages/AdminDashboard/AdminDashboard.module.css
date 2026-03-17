@@ -1,0 +1,21 @@
+.container {
+  max-width: 800px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+.eventTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.eventTable th, .eventTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.eventTable th {
+  background-color: #1976d2;
+  color: white;
+}

@@ -5,12 +5,30 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { validateEmail } from '../../utils/validation';
 import styles from './Register.module.css';
+import { useNavigate } from 'react-router-dom';
+//import emailjs from "emailjs-com";
 
 const Register = () => {
   const [dni, setDni] = useState('');
   const [correo, setCorreo] = useState('');
   const [clave, setClave] = useState('');
   const [confirmarClave, setConfirmarClave] = useState('');
+  const navigate = useNavigate();
+  const [role, setRole] = useState('usuario');
+
+  //   const sendEmail = (email) => {
+  //   emailjs.send(
+  //     "service_fx672ba",  // ID del servicio
+  //     "template_427v95y", // ID de la plantilla
+  //     { to_email: email }, 
+  //     "1EIiLMMjY3M3GEo98"      // Tu ID de usuario en EmailJS
+  //   ).then(() => {
+  //     console.log("Correo enviado con éxito!");
+  //   }).catch((error) => {
+  //     console.error("Error enviando correo: ", error);
+  //   });
+  // };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,12 +48,14 @@ const Register = () => {
       const user = userCredential.user;
 
       // Guardar info adicional en Firestore
-      await setDoc(doc(db, 'usuarios', user.uid), {
+      await setDoc(doc(db, "usuarios", user.uid), {
         uid: user.uid,
         correo,
         dni,
+        role, // Guardar el rol seleccionado
         creado: new Date()
       });
+
 
       alert(`Usuario registrado con éxito: ${user.email}`);
 
@@ -44,6 +64,8 @@ const Register = () => {
       setCorreo('');
       setClave('');
       setConfirmarClave('');
+      navigate('/login');
+      //sendEmail(correo);
     } catch (error) {
       alert(`Error al registrar usuario: ${error.message}`);
     }
@@ -59,7 +81,11 @@ const Register = () => {
           type="text"
           id="dni"
           value={dni}
-          onChange={(e) => setDni(e.target.value)}
+          onChange={(e) => {
+            const valor = e.target.value.replace(/\D/g, "");
+            setDni(valor)
+          }
+          }
           required
         />
 
@@ -89,8 +115,18 @@ const Register = () => {
           onChange={(e) => setConfirmarClave(e.target.value)}
           required
         />
+       <br>
+       </br>
+        <select id="role" className={styles.selectRole} value={role} onChange={(e) => setRole(e.target.value)} required>
+          <option value="usuario">Usuario</option>
+          <option value="admin">Administrador</option>
+        </select>
 
         <button type="submit">Registrar</button>
+        <button type="button" className={styles.backBtn} onClick={() => navigate('/login')}>
+          Volver al Login
+        </button>
+
       </form>
     </div>
   );

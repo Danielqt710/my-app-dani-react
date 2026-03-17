@@ -45,3 +45,44 @@ button {
 button:hover {
   background-color: #2e7d32;
 }
+
+.backBtn {
+  width: 100%;
+  margin-top: 15px;
+  background-color: #777; /* Gris medio */
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.backBtn:hover {
+  background-color: #555; /* Gris más oscuro al pasar el mouse */
+}
+
+.selectRole {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.selectRole:hover {
+  background-color: #ececec;
+}
+
+.selectRole:focus {
+  border-color: #1976d2;
+  outline: none;
+}
+
+.selectRole option {
+  font-size: 16px;
+  padding: 10px;
+}
+
